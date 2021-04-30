@@ -1,0 +1,15 @@
+{
+	"name": "kiru",
+	"version": "1.0.0",
+	"description": "A RESTful API that scrapes manga websites to get you updates for queried series",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node index.js"
+	},
+	"author": "jfabro3124@gmail.com",
+	"license": "ISC",
+	"dependencies": {
+		"puppeteer": "^9.0.0"
+	}
+}
