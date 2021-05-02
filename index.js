@@ -1,6 +1,3 @@
-const browserObject = require('./browser');
-const scraperController = require('./pageController');
+const search = require('./api/scraper');
 
-let browserInstance = browserObject.startBrowser();
-
-scraperController(browserInstance);
+search.launchScraper('isekai seikatsu');
