@@ -1,3 +1,3 @@
 const search = require('./api/scraper');
 
-search.launchScraper('isekai seikatsu');
+search.launchScraper('legend of the northern blade');

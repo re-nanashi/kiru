@@ -21,7 +21,7 @@ const scraperObject = (keyword) => {
 			let scrapedData = [];
 
 			async function scrapeCurrentPage() {
-				await page.waitForSelector('#wrap_content');
+				await page.waitForSelector('body');
 
 				let urls = await page.$$eval('#book_list > div', (links) => {
 					links = links.filter(
@@ -38,6 +38,9 @@ const scraperObject = (keyword) => {
 						let dataObj = {};
 						let newPage = await browser.newPage();
 						await newPage.goto(link);
+
+						//Will have to make a function to accomodate several sites according to this
+						dataObj['mangaLink'] = link;
 
 						dataObj['mangaTitle'] = await newPage.$eval(
 							'.info > h1',
@@ -77,6 +80,11 @@ const scraperObject = (keyword) => {
 							'table > tbody',
 							(table) =>
 								table.firstElementChild.querySelector('.chapter > a').href
+						);
+
+						dataObj['description'] = await newPage.$x(
+							'//*[@id="single_book"]/div[3]/p',
+							(p) => p.textContent
 						);
 
 						resolve(dataObj);
