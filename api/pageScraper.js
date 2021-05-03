@@ -5,15 +5,40 @@ const sites = require('./sites/special');
  *
  * will need to make an algorithm for different sites
  * will need to factor if page automatically goes to manga page
- * will need to factor if page didn't see a result
+ * will need to factor if page didn't see a result << special for mangakatana
  */
 
 const scraperObject = (keyword) => {
-	let provider = sites.mangaKatana(keyword);
-	let _url = provider.searchKeywordUrl();
+	let source = sites.mangaKatana(keyword); //<< will change
+	let _url = source.searchKeywordUrl(); //<< will change depending on site
 
+	/**
+	 * class extends scraper object super 'keyword'
+	 * then add source depending on site
+	 * also this.source
+	 * also this._url depending sa source
+	 *
+	 * in every inheritance there is a different function that help with queris
+	 *
+	 * this._selectors = {   depending sa site pero since mangakatana is main
+	 * 		directory : [manga list urls, link path],
+	 *		title: title path
+	 		image: img path
+			status: status path
+			latest: latest path
+			description: description path
+			next: next button path
+	 *
+	 * }
+	 *
+	 * then method scraper(browser, obj )
+	 *
+	 *
+	 *
+	 * }
+	 */
 	return {
-		async scraper(browser) {
+		async scraper(browser, selectors = this._selectors) {
 			let page = await browser.newPage();
 			console.log(`Navigating to ${_url}...`);
 			await page.goto(_url);
@@ -101,7 +126,7 @@ const scraperObject = (keyword) => {
 				try {
 					const nextButton = await page.$eval(
 						'.next.page-numbers',
-						(a) => a.textContent
+						(button) => button.textContent
 					);
 					nextButtonExist = true;
 				} catch (err) {
