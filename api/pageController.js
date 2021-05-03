@@ -1,4 +1,6 @@
-const pageScraper = require('./pageScraper');
+'use strict';
+
+const MangaKatana = require('./sites/special');
 
 async function scrapeAll(browserInstance, keyword) {
 	let browser;
@@ -6,8 +8,8 @@ async function scrapeAll(browserInstance, keyword) {
 		browser = await browserInstance;
 		let scrapedData = {};
 
-		let mangaKatana = pageScraper(keyword);
-		scrapedData['MangaKatana'] = await mangaKatana.scraper(browser);
+		let test = new MangaKatana(keyword);
+		scrapedData['mangakatana'] = await test.scraper(browser);
 
 		await browser.close();
 		console.log(scrapedData);
