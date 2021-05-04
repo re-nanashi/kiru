@@ -8,8 +8,11 @@ async function scrapeAll(browserInstance, keyword) {
 		browser = await browserInstance;
 		let scrapedData = {};
 
-		let test = new MangaKatana(keyword);
-		scrapedData['mangakatana'] = await test.scraper(browser);
+		let mangakatana = new MangaKatana(keyword);
+		scrapedData['mangakatana'] = await mangakatana.scraper(browser);
+
+		// let nightcomic = new NightComic(keyword);
+		// scrapedData['nightcomic'] = await nightcomic.scraper(browser);
 
 		await browser.close();
 		console.log(scrapedData);

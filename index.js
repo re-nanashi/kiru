@@ -1,3 +1,5 @@
-const search = require('./api/scraper');
+const search = require('./api/pageScraper');
 
-search.launchScraper('legend of');
+search.launchScraper('a');
+// search.launchScraper('karakai');
+// search.launchScraper('legend of the northern blade');

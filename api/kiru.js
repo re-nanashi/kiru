@@ -11,9 +11,17 @@ class Kiru {
 		console.log(`Navigation to ${this._url}...`);
 		await page.goto(this._url);
 
-		const { directory, next } = this._selectors;
+		const {
+			directory,
+			title,
+			image,
+			status,
+			latest,
+			description,
+			next,
+		} = this._selectors;
+
 		const [mangaListItems, directLink] = directory;
-		const { title, image, status, latest, description } = this._selectors;
 		const [chapterList, chapterLink] = latest;
 
 		let scrapedData = [];
@@ -22,22 +30,27 @@ class Kiru {
 			await page.waitForSelector('body');
 
 			let urls = await page.evaluate(
-				(parentSelector, directLink) => {
-					let mangaList = document.querySelectorAll(`${parentSelector}`);
+				(parentSelector, directLink, redirectUrl) => {
+					const mangaList = document.querySelectorAll(`${parentSelector}`);
 					let links = [...mangaList].map(
 						(el) => el.querySelector(`${directLink}`).href
 					);
+					if (links.length === 0 && mangaList.textContent !== '') {
+						return [redirectUrl];
+					}
 					return links;
 				},
 				mangaListItems,
-				directLink
+				directLink,
+				page.url()
 			);
-
+			console.log(urls);
 			let pagePromise = (link) =>
 				new Promise(async (resolve, reject) => {
 					let dataObj = {};
 					let newPage = await browser.newPage();
 					await newPage.goto(link);
+					await newPage.waitForSelector('body');
 
 					dataObj['link'] = link;
 
@@ -95,11 +108,11 @@ class Kiru {
 			for (let link in urls) {
 				let currentPageData = await pagePromise(urls[link]);
 				scrapedData.push(currentPageData);
-				console.log(currentPageData);
 			}
 
 			//Use Recursion to traverse pagination
 			let nextButtonExist = false;
+
 			try {
 				const nextButton = await page.$eval(`${next}`, (a) => a.textContent);
 
