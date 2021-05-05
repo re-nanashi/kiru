@@ -8,130 +8,145 @@ class Kiru {
 
 	async scraper(browser) {
 		let page = await browser.newPage();
-		console.log(`Navigation to ${this._url}...`);
 		await page.goto(this._url);
-
-		const {
-			directory,
-			title,
-			image,
-			status,
-			latest,
-			description,
-			next,
-		} = this._selectors;
-
-		const [mangaListItems, directLink] = directory;
-		const [chapterList, chapterLink] = latest;
 
 		let scrapedData = [];
 
-		async function scrapeCurrentPage() {
-			await page.waitForSelector('body');
+		let data = await this.scrapeCurrentPage(browser, page, scrapedData);
+		return data;
+	}
 
-			let urls = await page.evaluate(
-				(parentSelector, directLink, redirectUrl) => {
-					const mangaList = document.querySelectorAll(`${parentSelector}`);
-					let links = [...mangaList].map(
-						(el) => el.querySelector(`${directLink}`).href
-					);
-					if (links.length === 0 && mangaList.textContent !== '') {
-						return [redirectUrl];
-					}
-					return links;
-				},
-				mangaListItems,
-				directLink,
-				page.url()
-			);
-			console.log(urls);
-			let pagePromise = (link) =>
-				new Promise(async (resolve, reject) => {
-					let dataObj = {};
-					let newPage = await browser.newPage();
-					await newPage.goto(link);
-					await newPage.waitForSelector('body');
+	async scrapeCurrentPage(browser, page, scrapedData) {
+		await page.waitForSelector('body');
 
-					dataObj['link'] = link;
+		let queueList = await this.createQueueList(page);
 
-					dataObj['title'] = await newPage.$eval(
-						`${title}`,
-						(title) => title.textContent
-					);
-
-					dataObj['image'] = await newPage.$eval(`${image}`, (img) => img.src);
-
-					dataObj['status'] = await newPage.$eval(
-						`${status}`,
-						(status) => status.textContent
-					);
-
-					dataObj['latest'] = await newPage.evaluate(
-						(chapterList, chapterLink) => {
-							const list = document.querySelector(`${chapterList}`);
-							const direct = list.querySelector(`${chapterLink}`).textContent;
-							let currentChapter;
-
-							if (direct.includes(':')) {
-								let array = direct.toString().split(':');
-								currentChapter = array[0];
-								return currentChapter;
-							}
-
-							return direct.toString();
-						},
-						chapterList,
-						chapterLink
-					);
-
-					dataObj['latestLink'] = await newPage.evaluate(
-						(chapterList, chapterLink) => {
-							const latest = document.querySelector(`${chapterList}`);
-							const link = latest.querySelector(`${chapterLink}`);
-
-							return link.href;
-						},
-						chapterList,
-						chapterLink
-					);
-
-					dataObj['description'] = await newPage.$eval(
-						`${description}`,
-						(p) => p.textContent
-					);
-
-					resolve(dataObj);
-					await newPage.close();
-				});
-
-			//loop all manga links inside mangalist url
-			for (let link in urls) {
-				let currentPageData = await pagePromise(urls[link]);
-				scrapedData.push(currentPageData);
-			}
-
-			//Use Recursion to traverse pagination
-			let nextButtonExist = false;
-
-			try {
-				const nextButton = await page.$eval(`${next}`, (a) => a.textContent);
-
-				nextButtonExist = true;
-			} catch (err) {
-				nextButtonExist = false;
-			}
-
-			if (nextButtonExist) {
-				await page.click(`${next}`);
-				return scrapeCurrentPage();
-			}
-
-			await page.close();
-			return scrapedData;
+		for (let link in queueList) {
+			let currentPageData = await this.pagePromise(queueList[link], browser);
+			scrapedData.push(currentPageData);
 		}
 
-		let data = await scrapeCurrentPage();
-		return data; //returns array
+		let nextButtonExist = false;
+
+		try {
+			const nextButton = await page.$eval(`${this._selectors['next']}`);
+			nextButtonExist = true;
+		} catch (err) {
+			nextButtonExist = false;
+		}
+
+		if (nextButtonExist) {
+			await page.click(`${this._selectors.next}`);
+			return this.scrapeCurrentPage(page);
+		}
+
+		await page.close();
+		return scrapedData;
+	}
+
+	async createQueueList(page) {
+		let list = await page.evaluate(
+			(parentSelector, linkPath) => {
+				const listContainer = document.querySelectorAll(`${parentSelector}`);
+				let urls = [...listContainer].map(
+					(link) => link.querySelector(`${linkPath}`).href
+				);
+
+				return urls;
+			},
+			this._selectors['directory'][0],
+			this._selectors['directory'][1]
+		);
+
+		return list;
+	}
+
+	pagePromise = (link, browser) =>
+		new Promise(async (resolve, reject) => {
+			let dataObj = {};
+			let newPage = await browser.newPage();
+			await newPage.goto(link);
+
+			dataObj['link'] = link;
+			dataObj['title'] = await this.getTitle(newPage, this._selectors.title);
+			dataObj['image'] = await this.getImage(newPage, this._selectors.image);
+			dataObj['status'] = await this.getStatus(newPage, this._selectors.status);
+			dataObj['latest'] = await this.getLatestChapter(
+				newPage,
+				this._selectors['latest']
+			);
+			dataObj['latestLink'] = await this.getLatestChLink(
+				newPage,
+				this._selectors['latest']
+			);
+			dataObj['description'] = await this.getDescription(
+				newPage,
+				this._selectors.description
+			);
+
+			resolve(dataObj);
+			await newPage.close();
+		});
+
+	async getTitle(currentPage, selector) {
+		return await currentPage.$eval(`${selector}`, (node) => node.textContent);
+	}
+
+	async getImage(currentPage, selector) {
+		return await currentPage.$eval(`${selector}`, (image) => {
+			return image.src;
+		});
+	}
+
+	async getStatus(currentPage, selector) {
+		return await currentPage.$eval(
+			`${selector}`,
+			(status) => status.textContent
+		);
+	}
+
+	async getLatestChapter(currentPage, selector) {
+		const [list, linkPath] = selector;
+		let latest;
+		let latestChapter = await currentPage.evaluate(
+			(list, link) => {
+				const latestChapter = document.querySelector(`${list}`);
+				const chapterNumber = latestChapter.querySelector(`${link}`)
+					.textContent;
+
+				if (chapterNumber.includes(':')) {
+					let arr = chapterNumber.split(':');
+					latest = arr[0];
+					return latest;
+				}
+				return chapterNumber;
+			},
+			list,
+			linkPath
+		);
+		return latestChapter;
+	}
+
+	async getLatestChLink(currentPage, selector) {
+		const [list, linkPath] = selector;
+		let latestChapter = await currentPage.evaluate(
+			(list, link) => {
+				const latestChapter = document.querySelector(`${list}`);
+				const chapterLink = latestChapter.querySelector(`${link}`).href;
+
+				return chapterLink;
+			},
+			list,
+			linkPath
+		);
+		return latestChapter;
+	}
+
+	async getDescription(currentPage, selector) {
+		return await currentPage.$eval(
+			`${selector}`,
+			(description) => description.textContent
+		);
 	}
 }
 

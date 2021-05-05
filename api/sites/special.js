@@ -6,10 +6,11 @@ class MangaKatana extends Kiru {
 		url = MangaKatana.search(keyword),
 		selectors = {
 			directory: ['#book_list > div', 'h3 > a'],
-			title: '.info > h1',
-			image: '.cover img',
+			title: '.info > .heading',
+			image: '.cover > img',
 			status: '.d-row-small > .status',
-			latest: ['tbody', 'a'],
+			latest: ['table.uk-table > tbody', 'a'],
+			// latest: 'table.uk-table > tbody',
 			description: '.summary > p',
 			next: '.next.page-numbers',
 		}
