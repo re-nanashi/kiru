@@ -1,6 +1,6 @@
 'use strict';
 
-const MangaKatana = require('./sites/special');
+const MangaNelo = require('./sites/special');
 
 async function scrapeAll(browserInstance, keyword) {
 	let browser;
@@ -8,11 +8,11 @@ async function scrapeAll(browserInstance, keyword) {
 		browser = await browserInstance;
 		let scrapedData = {};
 
-		let mangakatana = new MangaKatana(keyword);
-		scrapedData['mangakatana'] = await mangakatana.scraper(browser);
+		// let mangakatana = new MangaKatana(keyword);
+		// scrapedData['mangakatana'] = await mangakatana.scraper(browser);
 
-		// let nightcomic = new NightComic(keyword);
-		// scrapedData['nightcomic'] = await nightcomic.scraper(browser);
+		let manganelo = new MangaNelo(keyword);
+		scrapedData['manganelo'] = await manganelo.scraper(browser);
 
 		await browser.close();
 		console.log(scrapedData);

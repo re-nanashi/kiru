@@ -10,7 +10,6 @@ class MangaKatana extends Kiru {
 			image: '.cover > img',
 			status: '.d-row-small > .status',
 			latest: ['table.uk-table > tbody', 'a'],
-			// latest: 'table.uk-table > tbody',
 			description: '.summary > p',
 			next: '.next.page-numbers',
 		}
@@ -26,34 +25,41 @@ class MangaKatana extends Kiru {
 	}
 }
 
-class NightComic extends Kiru {
+class MangaNelo extends Kiru {
 	constructor(
 		keyword,
-		url = NightComic.search(keyword),
+		url = MangaNelo.search(keyword),
 		selectors = {
-			directory: [
-				'body > div.wrap > div > div.site-content > div.c-page-content > div > div > div > div > div.main-col-inner > div > div.tab-content-wrap > div',
-				'div > a',
-			],
-			title: '.post-title > h1',
-			image:
-				'body > div.wrap > div > div.site-content > div > div.profile-manga > div > div > div > div.tab-summary > div.summary_image > a > img',
+			directory: ['.panel-search-story > div', 'div > a'],
+			title: '.story-info-right > h1',
+			image: '.info-image > img',
 			status:
-				'body > div.wrap > div > div.site-content > div > div.profile-manga > div > div > div > div.tab-summary > div.summary_content_wrap > div > div.post-status > div:nth-child(2) > div.summary-content',
-			latest: ['.main', 'a'],
-			description: 'description-summary',
+				'body > div.body-site > div.container.container-main > div.container-main-left > div.panel-story-info > div.story-info-right > table > tbody > tr:nth-child(3) > td.table-value',
+			latest: ['.row-content-chapter', 'a'],
+			description: '#panel-story-info-description',
 			next: '#navigation-ajax',
 		}
 	) {
 		super(keyword, url, selectors);
 	}
 
+	async getDescription(currentPage, selector) {
+		let text = await currentPage.$$eval(
+			`${selector}`,
+			(description) => description.textContent
+		);
+		let formated = [];
+		text.forEach((text) => {
+			formated.push(text);
+		});
+	}
+
 	static search(keyword) {
-		let query = keyword.split(' ').join('+');
-		let url = `https://www.nightcomic.com/?s=${query}&post_type=wp-manga`;
+		let query = keyword.split(' ').join('_');
+		let url = `https://manganelo.com/search/story/${query}`;
 
 		return url;
 	}
 }
 
-module.exports = MangaKatana;
+module.exports = MangaNelo;
