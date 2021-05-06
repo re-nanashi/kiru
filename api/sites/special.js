@@ -1,4 +1,6 @@
 const Kiru = require('../kiru');
+const userAgent = require('user-agents');
+const UserAgent = require('user-agents');
 
 //Subclass: specifically target mangakatana selectors
 class MangaKatana extends Kiru {
@@ -67,4 +69,38 @@ class MangaNelo extends Kiru {
 	}
 }
 
-module.exports = { MangaKatana, MangaNelo };
+//Subclass: specifically target mangapark selectors
+class MangaPark extends Kiru {
+	constructor(
+		keyword,
+		url = MangaPark.search(keyword),
+		selectors = {
+			directory: ['#search-list > div', 'div > a'],
+			title: 'h3.item-title > a',
+			image: '.attr-cover > img',
+			status:
+				'#mainer > div > div.row.detail-set > div.col-24.col-sm-16.col-md-18.mt-4.mt-sm-0.attr-main > div:nth-child(6) > span',
+			latest: ['#episodes-latest', 'a'],
+			description: '.limit-html',
+			next:
+				'#mainer > div > div.my-5.ml-auto.d-flex.justify-content-end > nav.d-none.d-md-block > ul > li:nth-child(8) > a',
+		}
+	) {
+		super(keyword, url, selectors);
+	}
+
+	async pagePromise(link, browser) {
+		super.pagePromise();
+		let newPage = await browser.newPage();
+		let agent = new UserAgent();
+		await newPage.setUserAgent(agent.toString());
+	}
+	static search(keyword) {
+		let query = keyword.split(' ').join('+');
+		let url = `https://mangapark.net/search?word=${query}`;
+
+		return url;
+	}
+}
+
+module.exports = { MangaKatana, MangaNelo, MangaPark };

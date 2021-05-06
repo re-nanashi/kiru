@@ -1,6 +1,6 @@
 'use strict';
 
-const { MangaKatana, MangaNelo } = require('./sites/special');
+const { MangaKatana, MangaNelo, MangaPark } = require('./sites/special');
 
 //Function: controls scraper instances
 async function scrapeAll(browserInstance, keyword) {
@@ -9,11 +9,14 @@ async function scrapeAll(browserInstance, keyword) {
 		browser = await browserInstance;
 		let scrapedData = {};
 
-		let mangakatana = new MangaKatana(keyword);
-		scrapedData['mangakatana'] = await mangakatana.scraper(browser);
+		// let mangakatana = new MangaKatana(keyword);
+		// scrapedData['mangakatana'] = await mangakatana.scraper(browser);
 
-		let manganelo = new MangaNelo(keyword);
-		scrapedData['manganelo'] = await manganelo.scraper(browser);
+		// let manganelo = new MangaNelo(keyword);
+		// scrapedData['manganelo'] = await manganelo.scraper(browser);
+
+		let mangapark = new MangaPark(keyword);
+		scrapedData['mangapark'] = await mangapark.scraper(browser);
 
 		await browser.close();
 		console.log(scrapedData);
