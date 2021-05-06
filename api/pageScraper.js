@@ -1,10 +1,11 @@
 const browserObject = require('./browser');
 const scraperController = require('./pageController');
 
+//Function: launches scraper
 function launchScraper(keyword) {
 	let browserInstance = browserObject.startBrowser();
 
-	scraperController(browserInstance, keyword); //<< 2 parameters another for url 1 time lang din
+	scraperController(browserInstance, keyword);
 }
 
 exports.launchScraper = launchScraper;

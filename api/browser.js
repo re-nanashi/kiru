@@ -1,11 +1,12 @@
 const puppeteer = require('puppeteer');
 
+//Funtion: commences chromium browser
 async function startBrowser() {
 	let browser;
 	try {
 		console.log('Opening the browser.....');
 		browser = await puppeteer.launch({
-			//when run to cloud turn into true
+			//Controls whether to manifest browser or not
 			headless: false,
 			args: ['--disable-setuid-sandbox'],
 			ignoreHTTPSErrors: true,

@@ -1,5 +1,6 @@
 const Kiru = require('../kiru');
 
+//Subclass: specifically target mangakatana selectors
 class MangaKatana extends Kiru {
 	constructor(
 		keyword,
@@ -25,6 +26,7 @@ class MangaKatana extends Kiru {
 	}
 }
 
+//Subclass: specifically target mangelo website
 class MangaNelo extends Kiru {
 	constructor(
 		keyword,
@@ -43,15 +45,18 @@ class MangaNelo extends Kiru {
 		super(keyword, url, selectors);
 	}
 
+	//Overrides Kiru's getDescription() to exclusively target manganelo selectors
 	async getDescription(currentPage, selector) {
-		let text = await currentPage.$$eval(
-			`${selector}`,
-			(description) => description.textContent
+		let textDescription = await currentPage.$eval(
+			`#panel-story-info-description`,
+			(description) => {
+				description.querySelector(`h3`).remove();
+				return description.textContent;
+			}
 		);
-		let formated = [];
-		text.forEach((text) => {
-			formated.push(text);
-		});
+
+		// Removes unnecessary text from description
+		return textDescription.replace(/\n/g, '');
 	}
 
 	static search(keyword) {
@@ -62,4 +67,4 @@ class MangaNelo extends Kiru {
 	}
 }
 
-module.exports = MangaNelo;
+module.exports = { MangaKatana, MangaNelo };

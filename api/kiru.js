@@ -1,14 +1,27 @@
 //Class: Main scraper class
 class Kiru {
+	/**
+	 * Create specific instances to target website
+	 * @param {string} keyword - query/search keyword
+	 * @param {string} url - 	url for keyword
+	 * @param {object} selectors - exclusive selectors for diffrent sites
+	 */
 	constructor(keyword, url = null, selectors = {}) {
 		this.keyword = keyword;
 		this._url = url;
 		this._selectors = selectors;
 	}
 
+	/**
+	 * Function: main function for web scraping
+	 * @param {function} browser - browser instance as parameter
+	 * @returns {array} - Scraped data
+	 */
+
 	async scraper(browser) {
 		let page = await browser.newPage();
 		await page.goto(this._url);
+		console.log(`Navigating to ${this._url}`);
 
 		let scrapedData = [];
 
@@ -16,6 +29,13 @@ class Kiru {
 		return data;
 	}
 
+	/**
+	 * Function: scrapes current page
+	 * @param {function} browser instance
+	 * @param {function} page instance
+	 * @param {array} scrapedData storage
+	 * @returns {array} current page data
+	 */
 	async scrapeCurrentPage(browser, page, scrapedData) {
 		await page.waitForSelector('body');
 
@@ -26,9 +46,11 @@ class Kiru {
 			scrapedData.push(currentPageData);
 		}
 
+		//Use Recursion to traverse pagination
 		let nextButtonExist = false;
 
 		try {
+			//Evaluates page if there is a next button
 			const nextButton = await page.$eval(`${this._selectors['next']}`);
 			nextButtonExist = true;
 		} catch (err) {
@@ -44,10 +66,13 @@ class Kiru {
 		return scrapedData;
 	}
 
+	//Function: creates and returns a list of links from search results
 	async createQueueList(page) {
 		let list = await page.evaluate(
 			(parentSelector, linkPath) => {
 				const listContainer = document.querySelectorAll(`${parentSelector}`);
+
+				//Maps all listnodes to create href array
 				let urls = [...listContainer].map(
 					(link) => link.querySelector(`${linkPath}`).href
 				);
@@ -61,6 +86,12 @@ class Kiru {
 		return list;
 	}
 
+	/**
+	 *
+	 * @param {string} link for every elements of an array
+	 * @param {function} browser instance
+	 * @returns {object} data from page
+	 */
 	pagePromise = (link, browser) =>
 		new Promise(async (resolve, reject) => {
 			let dataObj = {};
@@ -105,6 +136,7 @@ class Kiru {
 		);
 	}
 
+	//Gets latest chapter from chapter list
 	async getLatestChapter(currentPage, selector) {
 		const [list, linkPath] = selector;
 		let latest;
@@ -114,6 +146,7 @@ class Kiru {
 				const chapterNumber = latestChapter.querySelector(`${link}`)
 					.textContent;
 
+				//Checks if chapter has unnecessary text
 				if (chapterNumber.includes(':')) {
 					let arr = chapterNumber.split(':');
 					latest = arr[0];
