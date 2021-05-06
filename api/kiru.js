@@ -1,5 +1,3 @@
-const userAgent = require('user-agents');
-
 //Class: Main scraper class
 class Kiru {
 	/**

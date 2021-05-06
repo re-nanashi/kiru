@@ -1,6 +1,4 @@
 const Kiru = require('../kiru');
-const userAgent = require('user-agents');
-const UserAgent = require('user-agents');
 
 //Subclass: specifically target mangakatana selectors
 class MangaKatana extends Kiru {
@@ -89,12 +87,6 @@ class MangaPark extends Kiru {
 		super(keyword, url, selectors);
 	}
 
-	async pagePromise(link, browser) {
-		super.pagePromise();
-		let newPage = await browser.newPage();
-		let agent = new UserAgent();
-		await newPage.setUserAgent(agent.toString());
-	}
 	static search(keyword) {
 		let query = keyword.split(' ').join('+');
 		let url = `https://mangapark.net/search?word=${query}`;
