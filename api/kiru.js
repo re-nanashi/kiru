@@ -3,7 +3,7 @@ class Kiru {
 	/**
 	 * Create specific instances to target website
 	 * @param {string} keyword - query/search keyword
-	 * @param {string} url - 	url for keyword
+	 * @param {string} url - 	specific url for keyword search
 	 * @param {object} selectors - exclusive selectors for diffrent sites
 	 */
 	constructor(keyword, url = null, selectors = {}) {

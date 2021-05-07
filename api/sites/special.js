@@ -18,6 +18,23 @@ class MangaKatana extends Kiru {
 		super(keyword, url, selectors);
 	}
 
+	//override Kiru's createQueList() to cater mangakatana redirect function
+	async createQueueList(page) {
+		const currentUrl = await page.url();
+		const redirected = !currentUrl.includes('?search=');
+
+		if (redirected) {
+			return [currentUrl];
+		}
+
+		let list = await page.$$eval('#book_list > div', (listNode) => {
+			let urls = [...listNode].map((link) => link.querySelector('h3 > a').href);
+			return urls;
+		});
+
+		return list;
+	}
+
 	static search(keyword) {
 		let query = keyword.split(' ').join('+');
 		let url = `https://mangakatana.com/?search=${query}`;
@@ -45,7 +62,7 @@ class MangaNelo extends Kiru {
 		super(keyword, url, selectors);
 	}
 
-	//Overrides Kiru's getDescription() to exclusively target manganelo selectors
+	//@overrides Kiru's getDescription() to exclusively target manganelo selectors
 	async getDescription(currentPage, selector) {
 		let textDescription = await currentPage.$eval(
 			`#panel-story-info-description`,
