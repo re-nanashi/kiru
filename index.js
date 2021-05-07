@@ -1,7 +1,8 @@
 const search = require('./api/pageScraper');
 
 //Test searches
-// search.launchScraper('a');
-search.launchScraper('karakai jouzu');
+search.launchScraper('le');
+// search.launchScraper('gin no saji');
 // search.launchScraper('martial');
-// search.launchScraper('legend of the northern blade');
+// search.launchScraper('legend');
+// search.launchScraper(`Path of the Shaman`);

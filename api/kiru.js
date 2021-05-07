@@ -21,6 +21,7 @@ class Kiru {
 	async scraper(browser) {
 		let page = await browser.newPage();
 		await page.goto(this._url);
+		await page.waitForNavigation();
 		console.log(`Navigating to ${this._url}`);
 
 		let scrapedData = [];
@@ -51,7 +52,10 @@ class Kiru {
 
 		try {
 			//Evaluates page if there is a next button
-			const nextButton = await page.$eval(`${this._selectors['next']}`);
+			const nextButton = await page.$eval(
+				`${this._selectors.next}`,
+				(a) => a.textContent
+			);
 			nextButtonExist = true;
 		} catch (err) {
 			nextButtonExist = false;
@@ -97,6 +101,7 @@ class Kiru {
 			let dataObj = {};
 			let newPage = await browser.newPage();
 			await newPage.goto(link);
+			await newPage.waitForSelector('body');
 
 			dataObj['link'] = link;
 			dataObj['title'] = await this.getTitle(newPage, this._selectors.title);

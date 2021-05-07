@@ -18,7 +18,7 @@ class MangaKatana extends Kiru {
 		super(keyword, url, selectors);
 	}
 
-	//override Kiru's createQueList() to cater mangakatana redirect function
+	//@override Kiru's createQueList() to cater mangakatana redirect function
 	async createQueueList(page) {
 		const currentUrl = await page.url();
 		const redirected = !currentUrl.includes('?search=');
@@ -85,31 +85,44 @@ class MangaNelo extends Kiru {
 }
 
 //Subclass: specifically target mangapark selectors
-class MangaPark extends Kiru {
+class AsuraScans extends Kiru {
 	constructor(
 		keyword,
-		url = MangaPark.search(keyword),
+		url = AsuraScans.search(keyword),
 		selectors = {
-			directory: ['#search-list > div', 'div > a'],
-			title: 'h3.item-title > a',
-			image: '.attr-cover > img',
-			status:
-				'#mainer > div > div.row.detail-set > div.col-24.col-sm-16.col-md-18.mt-4.mt-sm-0.attr-main > div:nth-child(6) > span',
-			latest: ['#episodes-latest', 'a'],
-			description: '.limit-html',
-			next:
-				'#mainer > div > div.my-5.ml-auto.d-flex.justify-content-end > nav.d-none.d-md-block > ul > li:nth-child(8) > a',
+			directory: ['.listupd > div', 'div > a'],
+			title: '.entry-title',
+			image: '.thumb > img',
+			status: '.imptdt > i',
+			latest: ['#chapterlist > ul', 'epcur epcurlast'],
+			description: 'div.entry-content.entry-content-single > p',
+			next: '.pagination > a.next',
 		}
 	) {
 		super(keyword, url, selectors);
 	}
 
+	async getLatestChapter(currentPage) {
+		let latestChapter = await currentPage.$eval(
+			'.epcur.epcurlast',
+			(latest) => latest.textContent
+		);
+		return latestChapter;
+	}
+
+	async getLatestChLink(currentPage) {
+		let latestChapterLink = await currentPage.$eval(
+			'div.lastend > div:nth-child(2) > a',
+			(latest) => latest.href
+		);
+		return latestChapterLink;
+	}
+
 	static search(keyword) {
-		let query = keyword.split(' ').join('+');
-		let url = `https://mangapark.net/search?word=${query}`;
+		let url = `https://www.asurascans.com/?s=${keyword}`;
 
 		return url;
 	}
 }
 
-module.exports = { MangaKatana, MangaNelo, MangaPark };
+module.exports = { MangaKatana, MangaNelo, AsuraScans };
