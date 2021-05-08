@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+
 puppeteer.use(StealthPlugin());
+
 //Funtion: commences chromium browser
 async function startBrowser() {
 	let browser;
@@ -8,7 +10,7 @@ async function startBrowser() {
 		console.log('Opening the browser.....');
 		browser = await puppeteer.launch({
 			//Controls whether to manifest browser or not
-			headless: false,
+			headless: true,
 			args: ['--disable-setuid-sandbox'],
 			ignoreHTTPSErrors: true,
 		});
