@@ -21,7 +21,7 @@ class Kiru {
 	async scraper(browser) {
 		let page = await browser.newPage();
 		await page.goto(this._url);
-		await page.waitForNavigation();
+		// await page.waitForNavigation();
 		console.log(`Navigating to ${this._url}`);
 
 		let scrapedData = [];
@@ -37,14 +37,14 @@ class Kiru {
 	 * @param {array} scrapedData storage
 	 * @returns {array} current page data
 	 */
-	async scrapeCurrentPage(browser, page, scrapedData) {
+	async scrapeCurrentPage(browser, page, storage) {
 		await page.waitForSelector('body');
 
 		let queueList = await this.createQueueList(page);
 
 		for (let link in queueList) {
 			let currentPageData = await this.pagePromise(queueList[link], browser);
-			scrapedData.push(currentPageData);
+			storage.push(currentPageData);
 		}
 
 		//Use Recursion to traverse pagination
@@ -67,7 +67,7 @@ class Kiru {
 		}
 
 		await page.close();
-		return scrapedData;
+		return storage;
 	}
 
 	//Function: creates and returns a list of links from search results

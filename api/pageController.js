@@ -3,21 +3,21 @@
 const fs = require('fs');
 const { MangaKatana, MangaNelo, AsuraScans } = require('./sites/special');
 
-//Function: controls scraper instances
-async function scrapeAll(browserInstance, keyword) {
+/**
+ *
+ * Function: controls scraper instances
+ * @param {function} browserInstance
+ * @param {string} keyword - keyword query
+ * @param {array} providerArray - provider select array
+ * @returns {object} that is converted into JSON
+ */
+async function scrapeAll(browserInstance, keyword, providerArray) {
 	let browser;
 	try {
 		browser = await browserInstance;
 		let scrapedData = {};
 
-		// let mangakatana = new MangaKatana(keyword);
-		// scrapedData['mangakatana'] = await mangakatana.scraper(browser);
-
-		// let manganelo = new MangaNelo(keyword);
-		// scrapedData['manganelo'] = await manganelo.scraper(browser);
-
-		let asurascans = new AsuraScans(keyword);
-		scrapedData['asurascans'] = await asurascans.scraper(browser);
+		await dynamicClass(scrapedData);
 
 		await browser.close();
 		fs.writeFile(
@@ -35,10 +35,22 @@ async function scrapeAll(browserInstance, keyword) {
 	} catch (err) {
 		console.log('Could not resolve the browser instance => ', err);
 	}
+
+	//Dynamically instantiate class according to user selection
+	async function dynamicClass(storage) {
+		const sites = {
+			mangakatana: MangaKatana,
+			manganelo: MangaNelo,
+			asurascrans: AsuraScans,
+		};
+
+		//Loop through the array to instantiate all user selection
+		for (let i = 0; i < providerArray.length; i++) {
+			let mangasite = new sites[`${providerArray[i]}`](keyword);
+			storage[`${providerArray[i]}`] = await mangasite.scraper(browser);
+		}
+	}
 }
 
-//create a dynamic browser instance *
-function dynamicLoad() {}
-
-module.exports = (browserInstance, keyword) =>
-	scrapeAll(browserInstance, keyword);
+module.exports = (browserInstance, keyword, providerArray) =>
+	scrapeAll(browserInstance, keyword, providerArray);
