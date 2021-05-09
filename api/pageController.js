@@ -1,6 +1,6 @@
 'use strict';
 
-const fs = require('fs');
+// const fs = require('fs');
 const { MangaKatana, MangaNelo, AsuraScans } = require('./sites/special');
 
 /**
@@ -20,18 +20,18 @@ async function scrapeAll(browserInstance, keyword, providerArray) {
 		await dynamicClass(scrapedData);
 
 		await browser.close();
-		fs.writeFile(
-			'data.json',
-			JSON.stringify(scrapedData),
-			'utf8',
-			function (err) {
-				if (err) {
-					return console.log(err);
-				}
-				console.log('ダタを収集できました！');
-			}
-		);
-		console.log(scrapedData);
+		// fs.writeFile(
+		// 	'data.json',
+		// 	JSON.stringify(scrapedData),
+		// 	'utf8',
+		// 	function (err) {
+		// 		if (err) {
+		// 			return console.log(err);
+		// 		}
+		// 		console.log('ダタを収集できました！');
+		// 	}
+		// );
+		return scrapedData;
 	} catch (err) {
 		console.log('Could not resolve the browser instance => ', err);
 	}

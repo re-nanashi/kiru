@@ -10,28 +10,31 @@ app.use(function (req, res, next) {
 	res.header('Access-Control-Allow-Headers', 'Content-Type');
 	next();
 });
-//example www.api.com/manga/?source=mangakata-manganelo-asurascans&query=karakai_jouzu
-app.get('/search', (req, res) => {
-	let source = req.query.source.toLowerCase();
-	let keyword = req.query.keyword.toLowerCase();
+// http://localhost:3000/manga?source=mangakatana-manganelo&keyword=grand_blue
+app.get('/manga', (req, res) => {
+	let source = req.query.source;
+	let keyword = req.query.keyword;
 
 	function formatSources(src) {
 		return src.split('-');
 	}
 
 	function formatKeyword(keyword) {
-		return keyword.replace(/_/g, ' ');
+		return keyword.replace(/_/g, ' ').toString();
 	}
 
-	search.launchScraper(formatKeyword(keyword), formatSources(source));
-	const data = require('./data.json');
+	let data = search.launchScraper(
+		formatKeyword(keyword),
+		formatSources(source)
+	);
 
 	res.header('Content-Type', 'application/json');
-	res.send(data);
+	res.json(data);
+	res.status(500).json({ error: 'message' });
 });
 
 app.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`);
+	console.log(`API listening at http://localhost:${port}`);
 });
 
 //Test searches
