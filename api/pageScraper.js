@@ -5,7 +5,7 @@ const scraperController = require('./pageController');
 function launchScraper(keyword, providerArray) {
 	let browserInstance = browserObject.startBrowser();
 
-	scraperController(browserInstance, keyword, providerArray);
+	return scraperController(browserInstance, keyword, providerArray);
 }
 
 exports.launchScraper = launchScraper;
