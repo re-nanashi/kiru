@@ -9,12 +9,14 @@
 	"author": "jfabro3124@gmail.com",
 	"license": "ISC",
 	"dependencies": {
-		"puppeteer": "^9.1.1",
+		"chrome-aws-lambda": "^9.1.0",
 		"puppeteer-cluster": "^0.22.0",
+		"puppeteer-core": "^9.1.1",
 		"puppeteer-extra": "^3.1.18",
 		"user-agents": "^1.0.643"
 	},
 	"devDependencies": {
-		"@vercel/node": "^1.10.0"
+		"@vercel/node": "^1.10.0",
+		"puppeteer": "^9.1.1"
 	}
 }
