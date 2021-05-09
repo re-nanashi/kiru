@@ -12,13 +12,9 @@
 		"puppeteer": "^9.0.0",
 		"puppeteer-cluster": "^0.22.0",
 		"puppeteer-extra": "^3.1.18",
-		"puppeteer-extra-plugin-stealth": "^2.7.8",
 		"user-agents": "^1.0.643"
 	},
 	"devDependencies": {
 		"@vercel/node": "^1.10.0"
-	},
-	"pkg": {
-		"assets": "node_modules/puppeteer-extra-plugin-stealth/**/*.*"
 	}
 }

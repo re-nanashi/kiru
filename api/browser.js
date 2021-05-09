@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer-extra');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+// const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
-puppeteer.use(StealthPlugin());
+// puppeteer.use(StealthPlugin());
 
 //Funtion: commences chromium browser
 async function startBrowser() {
