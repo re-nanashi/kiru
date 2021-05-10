@@ -6,7 +6,7 @@ class Kiru {
 	 * @param {string} url - 	specific url for keyword search
 	 * @param {object} selectors - exclusive selectors for diffrent sites
 	 */
-	constructor(keyword, url = null, selectors = {}) {
+	constructor(keyword = null, url = null, selectors = {}) {
 		this.keyword = keyword;
 		this._url = url;
 		this._selectors = selectors;

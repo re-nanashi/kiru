@@ -1,7 +1,7 @@
 const search = require('./pageScraper');
 
 module.exports = async (req, res) => {
-	if (req.method === 'GET') {
+	try {
 		const { source, keyword } = req.query;
 
 		function formatSources(src) {
@@ -12,11 +12,13 @@ module.exports = async (req, res) => {
 			return keyword.replace(/_/g, ' ').toString();
 		}
 
-		let data = await search.launchScraper(
+		let data = await search.launchFullScraper(
 			formatKeyword(keyword),
 			formatSources(source)
 		);
 
 		res.json(data);
+	} catch (error) {
+		return res.status(400).json({ 'Kiru Main': 'simple manga scraper' });
 	}
 };

@@ -1,11 +1,17 @@
 const browserObject = require('./browser');
-const scraperController = require('./pageController');
+const { scrapeAll, scrapeDirect } = require('./pageController');
 
 //Function: launches scraper
-function launchScraper(keyword, providerArray) {
+function launchFullScraper(keyword, providerArray) {
 	let browserInstance = browserObject.startBrowser();
 
-	return scraperController(browserInstance, keyword, providerArray);
+	return scrapeAll(browserInstance, keyword, providerArray);
 }
 
-exports.launchScraper = launchScraper;
+function launchDirectScraper(url) {
+	let browserInstance = browserObject.startBrowser();
+
+	return scrapeDirect(browserInstance, url);
+}
+
+module.exports = { launchFullScraper, launchDirectScraper };

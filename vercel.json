@@ -18,6 +18,7 @@
 	],
 	"rewrites": [
 		{ "source": "/manga", "destination": "/api/index.js" },
+		{ "source": "/direct", "destination": "/api/direct.js" },
 		{ "source": "/api/(.*)", "destination": "/api/index.js" }
 	],
 	"redirects": [{ "source": "/", "destination": "/manga" }]
