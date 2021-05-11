@@ -10,10 +10,6 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 	puppeteer = require('puppeteer');
 }
 
-// const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-
-// puppeteer.use(StealthPlugin());
-
 //Funtion: commences chromium browser
 async function startBrowser() {
 	let browser;
