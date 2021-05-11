@@ -148,8 +148,9 @@ class Kiru {
 		let latestChapter = await currentPage.evaluate(
 			(list, link) => {
 				const latestChapter = document.querySelector(`${list}`);
-				const chapterNumber = latestChapter.querySelector(`${link}`)
-					.textContent;
+				const chapterNumber = latestChapter.querySelector(
+					`${link}`
+				).textContent;
 
 				//Checks if chapter has unnecessary text
 				if (chapterNumber.includes(':')) {
@@ -181,9 +182,8 @@ class Kiru {
 	}
 
 	async getDescription(currentPage, selector) {
-		return await currentPage.$eval(
-			`${selector}`,
-			(description) => description.textContent
+		return await currentPage.$eval(`${selector}`, (description) =>
+			description.textContent.replace(/\n/g, '')
 		);
 	}
 }
