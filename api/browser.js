@@ -14,7 +14,6 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 async function startBrowser() {
 	let browser;
 	try {
-		console.log('Opening the browser.....');
 		browser = await puppeteer.launch({
 			args: chrome.args,
 			defaultViewport: chrome.defaultViewport,

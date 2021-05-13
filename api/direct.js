@@ -9,9 +9,15 @@ module.exports = async (req, res) => {
 			res.json(data);
 
 			function formatURL(url) {
+				//Check if http is used then slice
+				if (url.includes(`http://`)) {
+					return `https://${url.slice(7).toString()}`;
+				}
+
 				if (!url.includes(`https://`)) {
 					return `https://${url}`;
 				}
+
 				return url.toString();
 			}
 		} else {
