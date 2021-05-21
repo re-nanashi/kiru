@@ -23,6 +23,7 @@ A serverless RESTful API scraper that scrapes data from selected manga sites cre
 ## Current available sources:
 
 ✅ **MangaKatana** [OK]
+
 ✅ **Manganelo** [OK]
 
 ## What data is being scraped?
@@ -94,7 +95,7 @@ return JSON.parse(data);
 
 `run http://localhost:8888/manga?source={source1-source2}&keyword={series title}` [OK]
 
-`run https://kiru-js.vercel.app/manga?source={source1-source2}&keyword={series title}` [NotRecommended]
+`run https://kiru-js.vercel.app/manga?source={source1-source2}&keyword={series title}` [NR]
 
 **npm start**
 
