@@ -1,4 +1,4 @@
-# Kiru
+# Kiru.js
 
 <p align="center">
   <img src="./docs/img/kiru-waifu.png">
@@ -38,7 +38,7 @@ A serverless RESTful API scraper that scrapes data from selected manga sites cre
 ## Installation/Development
 
 1. Clone the project <br>
-   `git clone https://github.com/re-nanashi/kiru.git'
+   `git clone https://github.com/re-nanashi/kiru.git`
 
 2. Go the directory and run npm install
 
@@ -60,7 +60,7 @@ vercel dev
 
 ### Kiru.js direct
 
-`run https://kiru-js.vercel.app/direct?url='
+`run https://kiru-js.vercel.app/direct?url=`
 
 **Sample scrape using direct endpoint:**
 
@@ -92,9 +92,9 @@ return JSON.parse(data);
 
 ### Kiru.js Main
 
-`run http://localhost:8888/manga?source={source1-source2}&keyword={series title}' [OK]
+`run http://localhost:8888/manga?source={source1-source2}&keyword={series title}` [OK]
 
-`run https://kiru-js.vercel.app/manga?source={source1-source2}&keyword={series title}' [NotRecommended]
+`run https://kiru-js.vercel.app/manga?source={source1-source2}&keyword={series title}` [NotRecommended]
 
 **npm start**
 
