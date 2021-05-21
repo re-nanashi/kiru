@@ -109,12 +109,12 @@ npm run start
 http://localhost:8888/manga?source=mangakatana-manganelo&keyword=legend of the northern blade
 ```
 
-### Things that I learned:
+## Things that I learned:
 
 - Learned some concepts about the backend.
 - Learned some concepts about APIs.
 
-### TODO
+## TODO
 
 - Refactor in the future for a more simpler and understandable structure.
 - Add more sources.
