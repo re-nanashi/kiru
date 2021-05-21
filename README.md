@@ -86,7 +86,7 @@ let response = (
 	)
 ).json();
 
-let data = await res;
+let data = await response;
 
 return JSON.parse(data);
 ```
