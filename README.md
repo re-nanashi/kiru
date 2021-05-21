@@ -53,9 +53,9 @@ npm install
 vercel dev
 ```
 
-## Update:
+## Note:
 
-- Currently, kiru.js: direct is recommended when run using deployed web address. Unfortunately at this moment, kiru.js main or full scraping through queries/keyword is only recommended when used in development. I will update as soon as possible.
+- Currently, using kiru.js direct is recommended when run on the deployed web address. Unfortunately at this moment, kiru.js main or full scraping through queries/keyword is only recommended when used in development. I will update as soon as possible.
 
 ## Basic Example Usage
 
