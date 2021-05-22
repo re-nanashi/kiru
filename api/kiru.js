@@ -107,6 +107,7 @@ class Kiru {
 			dataObj['title'] = await this.getTitle(newPage, this._selectors.title);
 			dataObj['image'] = await this.getImage(newPage, this._selectors.image);
 			dataObj['status'] = await this.getStatus(newPage, this._selectors.status);
+			dataObj['author'] = await this.getAuthor(newPage, this._selectors.author);
 			dataObj['latest'] = await this.getLatestChapter(
 				newPage,
 				this._selectors['latest']
@@ -131,6 +132,12 @@ class Kiru {
 	async getImage(currentPage, selector) {
 		return await currentPage.$eval(`${selector}`, (image) => {
 			return image.src;
+		});
+	}
+
+	async getAuthor(currentPage, selector) {
+		return await currentPage.$eval(`${selector}`, (author) => {
+			return author.textContent.replace(/\n/g, '');
 		});
 	}
 

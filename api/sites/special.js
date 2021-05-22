@@ -9,6 +9,7 @@ class MangaKatana extends Kiru {
 			directory: ['#book_list > div', 'h3 > a'],
 			title: '.info > .heading',
 			image: '.cover > img',
+			author: '.d-row-small > .authors',
 			status: '.d-row-small > .status',
 			latest: ['table.uk-table > tbody', 'a'],
 			description: '.summary > p',
@@ -52,6 +53,8 @@ class MangaNelo extends Kiru {
 			directory: ['.panel-search-story > div', 'div > a'],
 			title: '.story-info-right > h1',
 			image: '.info-image > img',
+			author:
+				'body > div.body-site > div.container.container-main > div.container-main-left > div.panel-story-info > div.story-info-right > table > tbody > tr:nth-child(2) > td.table-value',
 			status:
 				'body > div.body-site > div.container.container-main > div.container-main-left > div.panel-story-info > div.story-info-right > table > tbody > tr:nth-child(3) > td.table-value',
 			latest: ['.row-content-chapter', 'a'],
