@@ -96,6 +96,7 @@ class AsuraScans extends Kiru {
 			directory: ['.listupd > div', 'div > a'],
 			title: '.entry-title',
 			image: '.thumb > img',
+			author: '',
 			status: '.imptdt > i',
 			latest: ['#chapterlist > ul', 'epcur epcurlast'],
 			description: 'div.entry-content.entry-content-single > p',

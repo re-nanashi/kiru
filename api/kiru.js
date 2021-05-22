@@ -135,6 +135,7 @@ class Kiru {
 		});
 	}
 
+	//Function: getAuthor();
 	async getAuthor(currentPage, selector) {
 		return await currentPage.$eval(`${selector}`, (author) => {
 			return author.textContent.replace(/\n/g, '');

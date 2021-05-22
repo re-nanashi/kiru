@@ -55,7 +55,7 @@ vercel dev
 
 ## Note:
 
-- Currently, using kiru.js direct is recommended when run on the deployed web address. Unfortunately at this moment, kiru.js main or full scraping through queries/keyword is only recommended when used in development. I will update as soon as possible.
+- Currently, using kiru.js direct is recommended when API is run on the deployed web address. Unfortunately at this moment, kiru.js main or full scraping through queries/keyword is only recommended when used in development. I will update as soon as possible.
 
 ## Basic Example Usage
 
