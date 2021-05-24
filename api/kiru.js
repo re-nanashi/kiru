@@ -130,9 +130,9 @@ class Kiru {
 	}
 
 	async getImage(currentPage, selector) {
-		return await currentPage.$eval(`${selector}`, (image) => {
-			return image.src;
-		});
+		const image = await currentPage.$(`${selector}`);
+
+		return await image.screenshot({ encoding: 'base64' });
 	}
 
 	//Function: getAuthor();
