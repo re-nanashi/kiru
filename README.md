@@ -31,6 +31,7 @@ A serverless RESTful API scraper that scrapes data from selected manga sites cre
 - Source
 - Title
 - Cover Image
+- Author
 - Status
 - Latest Chapter
 - Latest Chapter Link
