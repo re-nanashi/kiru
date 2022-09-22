@@ -30,7 +30,7 @@ class Browser {
     async start() {
         // Launch browser instance
 	    try {
-	    	browser = await puppeteer.launch({
+	    	browser_instance = await puppeteer.launch({
 	    		args: chrome.args,
 	    		defaultViewport: chrome.defaultViewport,
 	    		executablePath: await chrome.executablePath,
@@ -41,7 +41,7 @@ class Browser {
 	    	console.log('Could not create a browser instance => :', err);
 	    }
 
-	    return browser;
+	    return browser_instance;
     }
 }
 
