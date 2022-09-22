@@ -1,17 +1,23 @@
-let chrome = {};
-let puppeteer;
-
-if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-	// running on the Vercel platform.
-	chrome = require('chrome-aws-lambda');
-	puppeteer = require('puppeteer-core');
-} else {
-	// running locally.
-	puppeteer = require('puppeteer');
-}
-
-//Funtion: commences chromium browser
+/** @brief Start browser instance.
+ *
+ *  @param void
+ *  @return returns a promise which resolves to browser instance
+ */
 async function startBrowser() {
+    // Initialize parameters
+    let chrome = {};
+    let puppeteer;
+
+    if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+    	// running on the Vercel platform.
+    	chrome = require('chrome-aws-lambda');
+    	puppeteer = require('puppeteer-core');
+    } else {
+    	// running locally.
+    	puppeteer = require('puppeteer');
+    }
+
+    // Create browser instance
 	let browser;
 	try {
 		browser = await puppeteer.launch({
