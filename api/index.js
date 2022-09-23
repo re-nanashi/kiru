@@ -1,18 +1,20 @@
-const search = require('./pageScraper');
+const Scraper = require('./PageController');
 
 module.exports = async (req, res) => {
 	try {
 		const { source, keyword } = req.query;
 
-		function formatSources(src) {
-			return src.split('-');
-		}
-
 		function formatKeyword(keyword) {
 			return keyword.replace(/_/g, ' ').toString();
 		}
 
-		let data = await search.launchFullScraper(
+		function formatSources(src) {
+			return src.split('-');
+		}
+
+
+        let kiru = new Scraper();
+		let data = await kiru.scrapeFull(
 			formatKeyword(keyword),
 			formatSources(source)
 		);

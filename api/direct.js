@@ -1,11 +1,12 @@
-const search = require('./pageScraper');
+const Scraper = require('./pageController');
 
 module.exports = async (req, res) => {
 	try {
 		const { url } = req.query;
 
 		if (url !== undefined) {
-			let data = await search.launchDirectScraper(formatURL(url));
+            let kiru = new Scraper();
+			let data = await kiru.scrapeDirect(formatURL(url));
 			res.json(data);
 
 			function formatURL(url) {
