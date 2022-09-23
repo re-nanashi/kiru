@@ -1,73 +1,83 @@
 'use strict';
+const Browser = require('./browser');
+const { MangaKatana, 
+        MangaNelo, 
+        AsuraScans } = require('./sites/special');
 
-const { MangaKatana, MangaNelo, AsuraScans } = require('./sites/special');
 
-/**
+/** @brief PageController class.
  *
- * Function: controls scraper instances
- * @param {function} browserInstance
- * @param {string} keyword - keyword query
- * @param {array} providerArray - provider select array
- * @returns {object} that is converted into JSON
+ *  Controls the scraper functionality to be used for the page to be scraped.
+ *
+ *  @constructor void
  */
-async function scrapeAll(browserInstance, keyword, providerArray) {
-	let browser;
-	try {
-		browser = await browserInstance;
-		let scrapedData = {};
-
-		await dynamicClass(scrapedData);
-
-		await browser.close();
-		return JSON.stringify(scrapedData);
-	} catch (err) {
-		console.log('Could not resolve the browser instance => ', err);
-	}
-
-	//Dynamically instantiate class according to user selection
-	async function dynamicClass(storage) {
-		const sites = {
+class PageController {
+    constructor () {
+        this.browserObject = new Browser();
+		this.mangaProviders = {
 			mangakatana: MangaKatana,
 			manganelo: MangaNelo,
 			asurascans: AsuraScans,
 		};
+    }
 
-		//Loop through the array to instantiate all user selection
-		for (let i = 0; i < providerArray.length; i++) {
-			let mangasite = new sites[`${providerArray[i]}`](keyword);
-			storage[`${providerArray[i]}`] = await mangasite.scraper(browser);
-		}
-	}
+    /** @brief Scrape the keyword from all the selected manga providers.
+     *
+     *  @param keyword keyword to scrape from a page 
+     *  @param selectedMangaProviderArray user selected manga providers 
+     *  @return {object} that is converted into JSON
+     */
+    async scrapeFull(keyword, selectedMangaProviderArray) {
+        let browserInstance;
+
+        // scrape data from the selected manga sites
+        try {
+            browserInstance = await this.browserObject.start();
+
+            let scrapedData = {};
+		    for (let i = 0; i < providerArray.length; i++) {
+		        // instantiate mangaProvider classes that the user selected
+		    	let mangasite = new mangaProviders[`${selectedMangaProviderArray[i]}`](keyword);
+		    	scrapedData[`${selectedMangaProviderArray[i]}`] = await mangasite.scrape(browserInstance);
+		    }
+
+            // close browser instance
+            await browserInstance.close();
+
+		    return JSON.stringify(scrapedData);
+        } catch(err) {
+            console.log('Error. Cannot scrape data.', err);
+        }
+    }
+
+    /** @brief Scrape the page directly.
+     *
+     *  @param {string} direct link of the manga
+     *  @return {object} that is converted into JSON
+     */
+    async scrapeDirect(urlToScrape) {
+        let browserInstance;
+
+        // scrape data from the direct url that is from one of the available sites
+        try {
+            browserInstance = await this.browserObject.start();
+
+		    let scrapedData = {};
+		    for (const key in sites) {
+		    	if (url.toString().includes(key)) {
+		    		let mangasite = new mangaProviders[`${key}`]('');
+		    		scrapedData[`${key}`] = await mangasite.generatePageData(urlToScrape, browserInstance);
+		    	}
+		    }
+
+            // close browser instance
+		    await browserInstance.close();
+
+		    return JSON.stringify(scrapedData);
+        } catch(err) {
+            console.log('Error. Cannot scrape data.', err);
+        }
+    }
 }
 
-async function scrapeDirect(browserInstance, url) {
-	let browser;
-	try {
-		browser = await browserInstance;
-		let scrapedData = {};
-
-		await dynamicSelect(url, scrapedData);
-
-		await browser.close();
-		return JSON.stringify(scrapedData);
-	} catch (err) {
-		console.log('Could not resolve the browser instance => ', err);
-	}
-
-	async function dynamicSelect(url, storage) {
-		const sites = {
-			mangakatana: MangaKatana,
-			manganelo: MangaNelo,
-			asurascans: AsuraScans,
-		};
-
-		for (const key in sites) {
-			if (url.toString().includes(key)) {
-				let mangasite = new sites[`${key}`]('');
-				storage[`${key}`] = await mangasite.pagePromise(url, browser);
-			}
-		}
-	}
-}
-
-module.exports = { scrapeAll, scrapeDirect };
+module.exports = PageController;
