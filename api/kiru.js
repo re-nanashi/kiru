@@ -1,3 +1,6 @@
+"use strict";
+const PageObject = require("./pageObject");
+
 //Class: Main scraper class
 class Kiru {
 	/**
@@ -18,15 +21,16 @@ class Kiru {
 	 * @returns {array} - Scraped data
 	 */
 
-	async scraper(browser) {
+	async scrape(browser) {
 		let page = await browser.newPage();
 		await page.goto(this._url);
+
 		// await page.waitForNavigation();
 		console.log(`Navigating to ${this._url}`);
 
 		let scrapedData = [];
+		let data = await scrapeCurrentPage(browser, page, scrapedData);
 
-		let data = await this.scrapeCurrentPage(browser, page, scrapedData);
 		return data;
 	}
 
@@ -37,27 +41,37 @@ class Kiru {
 	 * @param {array} scrapedData storage
 	 * @returns {array} current page data
 	 */
-	async scrapeCurrentPage(browser, page, storage) {
-		await page.waitForSelector('body');
-
-		let queueList = await this.createQueueList(page);
-
-		for (let link in queueList) {
-			let currentPageData = await this.pagePromise(queueList[link], browser);
-			storage.push(currentPageData);
-		}
-
-		//Use Recursion to traverse pagination
-		let nextButtonExist = false;
+	async scrapeCurrentPage(browser, page, scrapedDataStorage) {
+		await page.waitForSelector("body");
 
 		try {
-			//Evaluates page if there is a next button
+			let queueList = await createQueueList(page);
+
+			// generate page data from every link
+			for (let link in queueList) {
+				let currentPageData = await this.generatePageData(
+					queueList[link],
+					browser
+				);
+				scrapedDataStorage.push(currentPageData);
+			}
+		} catch (err) {
+			console.log("Error on creating a queueList:", err);
+		}
+
+		// use recursion to traverse pagination
+		let nextButtonExist = false;
+		try {
+			// evaluates the page if there is a next button element
 			const nextButton = await page.$eval(
 				`${this._selectors.next}`,
 				(a) => a.textContent
 			);
+
+			// if await did not catch any error, assign true
 			nextButtonExist = true;
 		} catch (err) {
+			// if the promise encouters an error/null, assign false
 			nextButtonExist = false;
 		}
 
@@ -65,12 +79,16 @@ class Kiru {
 			await page.click(`${this._selectors.next}`);
 			return this.scrapeCurrentPage(page);
 		}
-
 		await page.close();
-		return storage;
+
+		return scrapedDataStorage;
 	}
 
-	//Function: creates and returns a list of links from search results
+	/** @brief Creates and returns a list of links {string} from search results.
+	 *
+	 *  @param {object} a page object
+	 *  @returns {array} queuelist of manga page links to scrape
+	 */
 	async createQueueList(page) {
 		let list = await page.evaluate(
 			(parentSelector, linkPath) => {
@@ -83,8 +101,8 @@ class Kiru {
 
 				return urls;
 			},
-			this._selectors['directory'][0],
-			this._selectors['directory'][1]
+			this._selectors["directory"][0],
+			this._selectors["directory"][1]
 		);
 
 		return list;
@@ -96,104 +114,18 @@ class Kiru {
 	 * @param {function} browser instance
 	 * @returns {object} data from page
 	 */
-	pagePromise = (link, browser) =>
+	generatePageData = (link, browser) =>
 		new Promise(async (resolve, reject) => {
-			let dataObj = {};
 			let newPage = await browser.newPage();
 			await newPage.goto(link);
-			await newPage.waitForSelector('body');
+			await newPage.waitForSelector("body");
 
-			dataObj['link'] = link;
-			dataObj['title'] = await this.getTitle(newPage, this._selectors.title);
-			dataObj['image'] = await this.getImage(newPage, this._selectors.image);
-			dataObj['status'] = await this.getStatus(newPage, this._selectors.status);
-			dataObj['author'] = await this.getAuthor(newPage, this._selectors.author);
-			dataObj['latest'] = await this.getLatestChapter(
-				newPage,
-				this._selectors['latest']
-			);
-			dataObj['latestLink'] = await this.getLatestChLink(
-				newPage,
-				this._selectors['latest']
-			);
-			dataObj['description'] = await this.getDescription(
-				newPage,
-				this._selectors.description
-			);
+			let currentPage = new PageObject(link, newPage, this._selectors);
+			let dataObj = currentPage.generateMangaDataObject();
 
 			resolve(dataObj);
 			await newPage.close();
 		});
-
-	async getTitle(currentPage, selector) {
-		return await currentPage.$eval(`${selector}`, (node) => node.textContent);
-	}
-
-	async getImage(currentPage, selector) {
-		const image = await currentPage.$(`${selector}`);
-
-		return await image.screenshot({ encoding: 'base64' });
-	}
-
-	//Function: getAuthor();
-	async getAuthor(currentPage, selector) {
-		return await currentPage.$eval(`${selector}`, (author) => {
-			return author.textContent.replace(/\n/g, '');
-		});
-	}
-
-	async getStatus(currentPage, selector) {
-		return await currentPage.$eval(
-			`${selector}`,
-			(status) => status.textContent
-		);
-	}
-
-	//Gets latest chapter from chapter list
-	async getLatestChapter(currentPage, selector) {
-		const [list, linkPath] = selector;
-		let latest;
-		let latestChapter = await currentPage.evaluate(
-			(list, link) => {
-				const latestChapter = document.querySelector(`${list}`);
-				const chapterNumber = latestChapter.querySelector(
-					`${link}`
-				).textContent;
-
-				//Checks if chapter has unnecessary text
-				if (chapterNumber.includes(':')) {
-					let arr = chapterNumber.split(':');
-					latest = arr[0];
-					return latest;
-				}
-				return chapterNumber;
-			},
-			list,
-			linkPath
-		);
-		return latestChapter;
-	}
-
-	async getLatestChLink(currentPage, selector) {
-		const [list, linkPath] = selector;
-		let latestChapter = await currentPage.evaluate(
-			(list, link) => {
-				const latestChapter = document.querySelector(`${list}`);
-				const chapterLink = latestChapter.querySelector(`${link}`).href;
-
-				return chapterLink;
-			},
-			list,
-			linkPath
-		);
-		return latestChapter;
-	}
-
-	async getDescription(currentPage, selector) {
-		return await currentPage.$eval(`${selector}`, (description) =>
-			description.textContent.replace(/\n/g, '')
-		);
-	}
 }
 
 module.exports = Kiru;
